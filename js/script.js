@@ -15,11 +15,12 @@ This function will create and insert/append the elements needed to display a "pa
 */
 
 const itemsPerPage = 9;
+let studentList = document.querySelector('.student-list');
 
 function showPage (list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage;
    const endIndex = page * itemsPerPage-1;
-   let studentList = document.querySelector('.student-list');
+   
    studentList.innerHTML = '';
       
    for (let i=0; i<list.length; i++) {
@@ -57,7 +58,7 @@ function addPagination (list) {
                   </li>`;
       buttonList.insertAdjacentHTML('beforeend', paginationButton);
    }
-   const firstButton = document.querySelectorAll('button')[0];
+   const firstButton = buttonList.querySelector(':first-child button');
    firstButton.className = 'active';
    buttonList.addEventListener('click', (e) => {
       const clickedButton = e.target;
@@ -77,6 +78,7 @@ function addPagination (list) {
 /***Adding a search component***/
 
 function createSearch(list) {
+//Creating and dynamically adding a search bar
    const header = document.querySelector('.header');   
    const searchBar = `<label for="search" class="student-search">
                      <span>Search by name</span>
@@ -85,29 +87,27 @@ function createSearch(list) {
                      </label>`;   
    header.insertAdjacentHTML('beforeend', searchBar);  
 
-
+//Adding event listener to the input element
    const search = document.querySelector('input');
 
    search.addEventListener('keyup', (e) => {
       const input = e.target;
       const userInput = input.value.toLowerCase();
       const searchResults = [];
+      studentList.innerHTML = '';
+      
+      for (let i=0; i<list.length; i++) {
+         let firstName = list[i].name.first.toLowerCase();
+         let lastName = list[i].name.last.toLowerCase();
+         let name = `${firstName} ${lastName}`;
+         
+            if (name.includes(userInput)) {
+               searchResults.push(list[i]);
+            } 
+      }
 
-      console.log(userInput);
-
-      // for (let i=0; i<list.length; i++) {
-      //    let firstName = list[i].name.first.toLowerCase();
-      //    let lastName = list[i].name.last.toLowerCase();
-      //       let name = `${firstName} ${lastName}`;
-      //       if (name.includes(userInput)) {
-               
-
-      //       }
-
-
-      // }
-
-
+      addPagination (searchResults);
+      showPage(searchResults, 1);  
    });
 }
 
@@ -123,4 +123,4 @@ function createSearch(list) {
 // Call functions
 addPagination(data);
 showPage(data, 1);
-createSearch();
+createSearch(data)
