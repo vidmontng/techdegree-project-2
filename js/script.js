@@ -3,15 +3,11 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 
-
-
 /*
 For assistance:
    Check out the "Project Resources" section of the Instructions tab: https://teamtreehouse.com/projects/data-pagination-and-filtering#instructions
    Reach out in your Slack community: https://treehouse-fsjs-102.slack.com/app_redirect?channel=unit-2
 */
-
-
 
 /*
 Create the `showPage` function
@@ -25,8 +21,7 @@ function showPage (list, page) {
    const endIndex = page * itemsPerPage-1;
    let studentList = document.querySelector('.student-list');
    studentList.innerHTML = '';
-   
-   
+      
    for (let i=0; i<list.length; i++) {
       let item = '';
       if (i >= startIndex && i <= endIndex) {
@@ -45,25 +40,87 @@ function showPage (list, page) {
       }
    }
    }
-showPage(data, 4);
-
 
 /*
 Create the `addPagination` function
 This function will create and insert/append the elements needed for the pagination buttons
 */
+
 function addPagination (list) {
    const totalButtons = Math.ceil(list.length / itemsPerPage);
-   const buttonList = document.querySelector('.link-list');
+   let buttonList = document.querySelector('.link-list');
    buttonList.innerHTML='';
 
    for (let i=1; i<=totalButtons; i++) {
-      let button = `<li>
+      let paginationButton = `<li>
                   <button type="button">${i}</button>
                   </li>`;
-      buttonList.insertAdjacentHTML('beforeend',button);
+      buttonList.insertAdjacentHTML('beforeend', paginationButton);
    }
+   const firstButton = document.querySelectorAll('button')[0];
+   firstButton.className = 'active';
+   buttonList.addEventListener('click', (e) => {
+      const clickedButton = e.target;
+      buttonList = clickedButton.parentNode.parentNode;
+      const buttons = document.querySelectorAll('button');
+      let active = document.querySelector('.active');
+           
+      if ( clickedButton.tagName === 'BUTTON') {
+         active.className = '';
+         clickedButton.className = 'active';
+         let page = parseInt(clickedButton.textContent);
+         showPage(list, page);
+      }
+   });
 }
 
-addPagination(data);
+/***Adding a search component***/
+
+function createSearch(list) {
+   const header = document.querySelector('.header');   
+   const searchBar = `<label for="search" class="student-search">
+                     <span>Search by name</span>
+                     <input id="search" placeholder="Search by name...">
+                     <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+                     </label>`;   
+   header.insertAdjacentHTML('beforeend', searchBar);  
+
+
+   const search = document.querySelector('input');
+
+   search.addEventListener('keyup', (e) => {
+      const input = e.target;
+      const userInput = input.value.toLowerCase();
+      const searchResults = [];
+
+      console.log(userInput);
+
+      // for (let i=0; i<list.length; i++) {
+      //    let firstName = list[i].name.first.toLowerCase();
+      //    let lastName = list[i].name.last.toLowerCase();
+      //       let name = `${firstName} ${lastName}`;
+      //       if (name.includes(userInput)) {
+               
+
+      //       }
+
+
+      // }
+
+
+   });
+}
+
+
+
+
+
+
+
+
+
+
 // Call functions
+addPagination(data);
+showPage(data, 1);
+createSearch();
