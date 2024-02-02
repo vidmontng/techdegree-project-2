@@ -16,6 +16,8 @@ This function will create and insert/append the elements needed to display a "pa
 
 const itemsPerPage = 9;
 let studentList = document.querySelector('.student-list');
+let buttonList = document.querySelector('.link-list');
+let paginationDiv = document.querySelector('.pagination');
 
 function showPage (list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage;
@@ -49,7 +51,7 @@ This function will create and insert/append the elements needed for the paginati
 
 function addPagination (list) {
    const totalButtons = Math.ceil(list.length / itemsPerPage);
-   let buttonList = document.querySelector('.link-list');
+   
    buttonList.innerHTML='';
 
    for (let i=1; i<=totalButtons; i++) {
@@ -58,8 +60,10 @@ function addPagination (list) {
                   </li>`;
       buttonList.insertAdjacentHTML('beforeend', paginationButton);
    }
+      if (totalButtons>0) {
    const firstButton = buttonList.querySelector(':first-child button');
    firstButton.className = 'active';
+}
    buttonList.addEventListener('click', (e) => {
       const clickedButton = e.target;
       buttonList = clickedButton.parentNode.parentNode;
@@ -74,11 +78,14 @@ function addPagination (list) {
       }
    });
 }
-
+/*********************************/
 /***Adding a search component***/
+/*********************************/
 
-function createSearch(list) {
+
 //Creating and dynamically adding a search bar
+function createSearchBar() {
+
    const header = document.querySelector('.header');   
    const searchBar = `<label for="search" class="student-search">
                      <span>Search by name</span>
@@ -86,13 +93,21 @@ function createSearch(list) {
                      <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
                      </label>`;   
    header.insertAdjacentHTML('beforeend', searchBar);  
+}
+
 
 //Adding event listener to the input element
-   const search = document.querySelector('input');
+   
+   
+ /*** Event listener for input element ***/ 
+function eventListeners (list) {
 
-   search.addEventListener('keyup', (e) => {
-      const input = e.target;
-      const userInput = input.value.toLowerCase();
+   const searchField = document.querySelector('input');
+   let searchButton = document.querySelector("button[type='button']");
+
+   searchField.addEventListener('keyup', (e) => {
+      const searchField = e.target;
+      const userInputValue = searchField.value.toLowerCase();
       const searchResults = [];
       studentList.innerHTML = '';
       
@@ -101,26 +116,53 @@ function createSearch(list) {
          let lastName = list[i].name.last.toLowerCase();
          let name = `${firstName} ${lastName}`;
          
-            if (name.includes(userInput)) {
+         if (name.includes(userInputValue)) {
+            searchResults.push(list[i]);
+         } 
+      }  
+      
+      if (searchResults.length > 0) {
+        showPage(searchResults, 1);
+      } else {
+         studentList.innerHTML = `<h2>Sorry, no results found...</h2>`;
+      }
+      addPagination (searchResults);
+   });
+
+    
+ /*** Event listener for button  ***/ 
+
+      searchButton.addEventListener('click', (e) => {         
+         const searchButton = e.target;
+         const userInputValue = searchField.value.toLowerCase();
+         const searchResults = [];
+         studentList.innerHTML = '';
+         
+         for (let i=0; i<list.length; i++) {
+            let firstName = list[i].name.first.toLowerCase();
+            let lastName = list[i].name.last.toLowerCase();
+            let name = `${firstName} ${lastName}`;
+            
+            if (name.includes(userInputValue)) {
                searchResults.push(list[i]);
             } 
-      }
+         }  
+         
+         if (searchResults.length > 0) {
+           showPage(searchResults, 1);
+         } else {
+            studentList.innerHTML = `<h2>Sorry, no results found...</h2>`;
+         }
+         addPagination (searchResults);
 
-      addPagination (searchResults);
-      showPage(searchResults, 1);  
-   });
-}
-
-
-
-
-
-
+      });
 
 
+   }
 
 
 // Call functions
 addPagination(data);
 showPage(data, 1);
-createSearch(data)
+createSearchBar();
+eventListeners(data);
