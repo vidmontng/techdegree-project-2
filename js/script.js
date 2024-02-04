@@ -9,15 +9,16 @@ For assistance:
    Reach out in your Slack community: https://treehouse-fsjs-102.slack.com/app_redirect?channel=unit-2
 */
 
-/*
-Create the `showPage` function
-This function will create and insert/append the elements needed to display a "page" of nine students
-*/
+
 
 const itemsPerPage = 9;
 let studentList = document.querySelector('.student-list');
 let buttonList = document.querySelector('.link-list');
-let paginationDiv = document.querySelector('.pagination');
+
+/*
+Create the `showPage` function
+This function will create and insert/append the elements needed to display a "page" of nine students
+*/
 
 function showPage (list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage;
@@ -61,9 +62,9 @@ function addPagination (list) {
       buttonList.insertAdjacentHTML('beforeend', paginationButton);
    }
       if (totalButtons>0) {
-   const firstButton = buttonList.querySelector(':first-child button');
-   firstButton.className = 'active';
-}
+         const firstButton = buttonList.querySelector(':first-child button');
+         firstButton.className = 'active';
+      }
    buttonList.addEventListener('click', (e) => {
       const clickedButton = e.target;
       buttonList = clickedButton.parentNode.parentNode;
@@ -78,12 +79,13 @@ function addPagination (list) {
       }
    });
 }
+
 /*********************************/
 /***Adding a search component***/
 /*********************************/
 
+/***Dynamically adding a search bar***/
 
-//Creating and dynamically adding a search bar
 function createSearchBar() {
 
    const header = document.querySelector('.header');   
@@ -92,77 +94,59 @@ function createSearchBar() {
                      <input id="search" placeholder="Search by name...">
                      <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
                      </label>`;   
-   header.insertAdjacentHTML('beforeend', searchBar);  
+   header.insertAdjacentHTML('beforeend', searchBar); 
 }
 
 
-//Adding event listener to the input element
-   
-   
- /*** Event listener for input element ***/ 
-function eventListeners (list) {
+/***Creating function that will check if data array contains the name entered by the user, and will output the results ***/
 
-   const searchField = document.querySelector('input');
+function outputSearchResults(userInputValue, list) {
+
+   const searchResults = [];
+   studentList.innerHTML = '';
+
+for (let i=0; i<list.length; i++) {
+   let firstName = list[i].name.first.toLowerCase();
+   let lastName = list[i].name.last.toLowerCase();
+   let name = `${firstName} ${lastName}`;
+   
+   if (name.includes(userInputValue)) {
+      searchResults.push(list[i]);
+   } 
+}  
+
+   if (searchResults.length > 0) {
+   showPage(searchResults, 1);
+   } else {
+      studentList.innerHTML = `<h1 class="no-results">Sorry, no results found...</h1>`;
+   }
+   addPagination (searchResults);
+} 
+
+   
+ /*** Creating event listeners for both - input and button ***/ 
+ 
+function createEventListeners(list) {
+   let searchField = document.querySelector('input');
    let searchButton = document.querySelector("button[type='button']");
+   
 
    searchField.addEventListener('keyup', (e) => {
       const searchField = e.target;
       const userInputValue = searchField.value.toLowerCase();
-      const searchResults = [];
-      studentList.innerHTML = '';
-      
-      for (let i=0; i<list.length; i++) {
-         let firstName = list[i].name.first.toLowerCase();
-         let lastName = list[i].name.last.toLowerCase();
-         let name = `${firstName} ${lastName}`;
-         
-         if (name.includes(userInputValue)) {
-            searchResults.push(list[i]);
-         } 
-      }  
-      
-      if (searchResults.length > 0) {
-        showPage(searchResults, 1);
-      } else {
-         studentList.innerHTML = `<h2>Sorry, no results found...</h2>`;
-      }
-      addPagination (searchResults);
+      outputSearchResults(userInputValue, data)
    });
 
-    
- /*** Event listener for button  ***/ 
-
-      searchButton.addEventListener('click', (e) => {         
-         const searchButton = e.target;
-         const userInputValue = searchField.value.toLowerCase();
-         const searchResults = [];
-         studentList.innerHTML = '';
-         
-         for (let i=0; i<list.length; i++) {
-            let firstName = list[i].name.first.toLowerCase();
-            let lastName = list[i].name.last.toLowerCase();
-            let name = `${firstName} ${lastName}`;
-            
-            if (name.includes(userInputValue)) {
-               searchResults.push(list[i]);
-            } 
-         }  
-         
-         if (searchResults.length > 0) {
-           showPage(searchResults, 1);
-         } else {
-            studentList.innerHTML = `<h2>Sorry, no results found...</h2>`;
-         }
-         addPagination (searchResults);
-
-      });
-
-
-   }
-
+   searchButton.addEventListener('click', (e) => {
+      const searchButton = e.target;
+      const userInputValue = searchField.value.toLowerCase();  
+      outputSearchResults(userInputValue, data)
+   });
+}
 
 // Call functions
 addPagination(data);
 showPage(data, 1);
 createSearchBar();
-eventListeners(data);
+createEventListeners(data);
+
