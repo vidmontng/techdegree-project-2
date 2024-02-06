@@ -3,22 +3,17 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 
-/*
-For assistance:
-   Check out the "Project Resources" section of the Instructions tab: https://teamtreehouse.com/projects/data-pagination-and-filtering#instructions
-   Reach out in your Slack community: https://treehouse-fsjs-102.slack.com/app_redirect?channel=unit-2
-*/
-
-
-
+//every page will have 9 student cards max
 const itemsPerPage = 9;
+//selecting the element where we'll append student cards
 let studentList = document.querySelector('.student-list');
+//selecting the element where we'll append the buttons for pagination
 let buttonList = document.querySelector('.link-list');
 
-/*
-Create the `showPage` function
-This function will create and insert/append the elements needed to display a "page" of nine students
-*/
+
+/***Creating showPage function.
+This function will create and insert/append the elements needed to display a "page" of nine students***/
+
 
 function showPage (list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage;
@@ -43,28 +38,30 @@ function showPage (list, page) {
             studentList.insertAdjacentHTML('beforeend',item);  
       }
    }
-   }
+}
 
-/*
-Create the `addPagination` function
+/*** 
+Creating the `addPagination` function
 This function will create and insert/append the elements needed for the pagination buttons
-*/
+***/
 
 function addPagination (list) {
-   const totalButtons = Math.ceil(list.length / itemsPerPage);
-   
-   buttonList.innerHTML='';
 
+   const totalButtons = Math.ceil(list.length / itemsPerPage);
+   buttonList.innerHTML='';
+   //creating all buttons needed for the total quantity of pages
    for (let i=1; i<=totalButtons; i++) {
       let paginationButton = `<li>
-                  <button type="button">${i}</button>
-                  </li>`;
+                              <button type="button">${i}</button>
+                              </li>`;
       buttonList.insertAdjacentHTML('beforeend', paginationButton);
    }
-      if (totalButtons>0) {
+   /**Added the below condition - to not show any buttons specifically in case there are no search results and there's nothing to display **/
+      if (totalButtons > 0) {
          const firstButton = buttonList.querySelector(':first-child button');
          firstButton.className = 'active';
       }
+   /***Event listener that will make a proper page button active and show the content for that page ***/
    buttonList.addEventListener('click', (e) => {
       const clickedButton = e.target;
       buttonList = clickedButton.parentNode.parentNode;
@@ -80,9 +77,9 @@ function addPagination (list) {
    });
 }
 
-/*********************************/
-/***Adding a search component***/
-/*********************************/
+/****************************************************************/
+/***Creating a search component and adding functionality to it***/
+/****************************************************************/
 
 /***Dynamically adding a search bar***/
 
@@ -101,10 +98,10 @@ function createSearchBar() {
 /***Creating function that will check if data array contains the name entered by the user, and will output the results ***/
 
 function outputSearchResults(userInputValue, list) {
-
+   
    const searchResults = [];
    studentList.innerHTML = '';
-
+//check every item in data array whether it contains the name entered by a user
 for (let i=0; i<list.length; i++) {
    let firstName = list[i].name.first.toLowerCase();
    let lastName = list[i].name.last.toLowerCase();
@@ -113,8 +110,8 @@ for (let i=0; i<list.length; i++) {
    if (name.includes(userInputValue)) {
       searchResults.push(list[i]);
    } 
-}  
-
+}  //if there are any students with the entered name - display the first page with the search results..
+   //if there are no student with entered name in data array, output "Sorry, no results found..."
    if (searchResults.length > 0) {
    showPage(searchResults, 1);
    } else {
@@ -125,6 +122,7 @@ for (let i=0; i<list.length; i++) {
 
    
  /*** Creating event listeners for both - input and button ***/ 
+ 
  
 function createEventListeners(list) {
    let searchField = document.querySelector('input');
@@ -144,7 +142,7 @@ function createEventListeners(list) {
    });
 }
 
-// Call functions
+// Calling all functions
 addPagination(data);
 showPage(data, 1);
 createSearchBar();
